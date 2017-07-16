@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from msg_processors.msg_routers import route_post_request
+
 import json
 
 
@@ -7,15 +9,13 @@ import json
 def process_messages(request):
     print " >> RECEIVED: " + str(request.POST)
 
+    response_text = route_post_request(request.POST)
+
     data = {
         "messages": [
             {
                 "type": "text",
-                "text": "Sorry, I don't have any sandwiches, but have a picture instead:"
-            },
-            {
-                "type": "rich",
-                "html": "<img src='http://i.imgur.com/J9DLQ.png'>"
+                "text": response_text
             }
         ]
     }
