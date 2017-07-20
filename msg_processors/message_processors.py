@@ -1,3 +1,5 @@
+import requests
+
 #todo: move these to a settings-esque file and state that they could come from DB
 WEATHER_PATTERNS = ["what's the weather in <Location>",
                     "weather in <Location>",
@@ -38,10 +40,24 @@ def give_address_on_match(text, pattern_ls):
                     return address_str
 
             # todo state assumption that address service does not care about case
+            # todo: MAYBE swap address for <location> and be sure its the same sentance
 
 
 def give_weather(address):
+    data = get_coordinates(address)
     return "Its Hot in " + address + "!"
+
+
+def get_coordinates(address):
+    response = requests.post('https://maps.googleapis.com/maps/api/geocode/json',
+                      params={'address': address, 'key': 'AIzaSyAfkBUJijTqJos5xzxRe3Ugr9QnxDM3bCE'})
+    print " >> geocode: " + str(response)
+
+    if 'results' in response:
+        print "response[results] " + str(response['results'])
+    if hasattr(response, 'text'):
+        print "response.text " + str(response.text)
+    return response
 
 
 if __name__ == '__main__':
