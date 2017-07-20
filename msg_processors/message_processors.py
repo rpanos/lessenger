@@ -44,26 +44,21 @@ def give_address_on_match(text, pattern_ls):
             # todo: MAYBE swap address for <location> and be sure its the same sentance
 
 
+# todo: consider a form that might return more than one match?
 def seek_like_patterns_from_list(text, pattern_ls, common_key):
-
     for pattern in pattern_ls:
         poss_key_match = find_patterns_in_text(text, pattern, common_key)
         if poss_key_match:
-            print "=====>> FOUND poss_key_match: " + poss_key_match
+            return poss_key_match
 
 
 def find_patterns_in_text(text, pattern, pattern_key):
-    # text_ls = text.lower().split()
     pattern_ls = pattern.lower().split()
     pattern_key = pattern_key.lower()
     text_lower = text.lower()
-    print "pattern_ls: " + str(pattern_ls)
 
     if pattern_key in pattern_ls:
         key_idx = pattern_ls.index(pattern_key)
-        print " key_idx " + str(key_idx)
-    # else:
-    # if key_idx > -1:
         pre_match_txt = " ".join(pattern_ls[0:key_idx])
         post_match_txt = " ".join(pattern_ls[key_idx+1:len(pattern_ls)])
 
@@ -72,37 +67,24 @@ def find_patterns_in_text(text, pattern, pattern_key):
         # todo log error
         return
 
-    # if (pre_match_txt in text or len(pre_match_txt) == 0) and \
-    #     (post_match_txt in text or len(post_match_txt) == 0):
-    # if (pre_match_txt in text or len(pre_match_txt) == 0) and \
-    #     (post_match_txt in text or len(post_match_txt) == 0):
-
-    print "SEEKING :" + pattern + "| in |" + text_lower
-
     if (len(pre_match_txt) > 0 and pre_match_txt in text_lower) or \
             (len(post_match_txt) > 0 and post_match_txt in text_lower):
 
-        print ">> pre_match_txt: " + pre_match_txt
-        print ">> post_match_txt: " + post_match_txt
         # Be sure these arent partials
         if (len(pre_match_txt) > 0 and text_lower.index(pre_match_txt) != 0) or \
-            (len(post_match_txt) > 0 and text_lower.index(post_match_txt) != len(text) - len(post_match_txt)):
-            print " Partials! "
-            print str(text_lower.index(post_match_txt)) + " != " + str(len(text_lower) - len(post_match_txt))
-            print " text_lower.index(pre_match_txt) " + str(text_lower.index(pre_match_txt))
+                (len(post_match_txt) > 0 and text_lower.index(post_match_txt) != len(text) - len(post_match_txt)):
             return
-        key_match = text[len(pre_match_txt):len(text_lower) - len(post_match_txt)]
-        print "=========================key_match: " + key_match
-        return key_match
+        return text[len(pre_match_txt):len(text_lower) - len(post_match_txt)].lstrip().rstrip()
+
+        return
     else:
         # this is not an error!
         return
 
 
-
-
 def give_weather(address):
     data = get_coordinates(address)
+    # todo look up weather
     return "Its Hot in " + address + "!"
 
 
@@ -130,9 +112,10 @@ if __name__ == '__main__':
     print str(seek_like_patterns_from_list("Herman bob weather", WEATHER_PATTERNS, "<Location>"))
     print str(seek_like_patterns_from_list("what's the weather in large hamster", WEATHER_PATTERNS, "<Location>"))
     print str(seek_like_patterns_from_list("what's the weather in <Location>", WEATHER_PATTERNS, "<Location>"))
+    print str(seek_like_patterns_from_list("well, what's the weather in <Location>", WEATHER_PATTERNS, "<Location>"))
 
-    print str(seek_like_patterns_from_list("weather what's the in large hamster fake address", WEATHER_PATTERNS, "<Location>"))
-    print str(seek_like_patterns_from_list("What is the weather in blah blah ssuper niot", WEATHER_PATTERNS, "<Location>"))
+    print str(seek_like_patterns_from_list("weather the in large hamster fake address", WEATHER_PATTERNS, "<Location>"))
+    print str(seek_like_patterns_from_list("What is the weather in blah blah super nice", WEATHER_PATTERNS, "<Location>"))
 
 
 
