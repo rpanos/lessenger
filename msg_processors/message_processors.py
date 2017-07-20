@@ -1,4 +1,5 @@
 import requests
+from settings import *
 
 #todo: move these to a settings-esque file and state that they could come from DB
 WEATHER_PATTERNS = ["what's the weather in <Location>",
@@ -49,8 +50,8 @@ def give_weather(address):
 
 
 def get_coordinates(address):
-    response = requests.post('https://maps.googleapis.com/maps/api/geocode/json',
-                      params={'address': address, 'key': 'AIzaSyAfkBUJijTqJos5xzxRe3Ugr9QnxDM3bCE'})
+    response = requests.post(GOOGLE_API_MAP_URL,
+                      params={'address': address, 'key': GOOGLE_API_KEY})
     print " >> geocode: " + str(response)
 
     if 'results' in response:
