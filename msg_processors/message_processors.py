@@ -1,4 +1,5 @@
 import requests
+import json
 from settings import *
 
 #todo: move these to a settings-esque file and state that they could come from DB
@@ -83,22 +84,33 @@ def find_patterns_in_text(text, pattern, pattern_key):
 
 
 def give_weather(address):
-    data = get_coordinates(address)
+    location = get_coordinates(address)
     # todo look up weather
-    return "Its Hot in " + address + "!"
+    # return "Its Hot in " + address + "!"
+    if location and 'lat' in location and 'lng' in location:
+
+
+        print "GEO GOT " + str(location['lat']) + "," + str(location['lng'])
+        # https://api.darksky.net/forecast/[key]/[latitude],[longitude]
+        weather_request = DARKSKY_FULL_API_KEY + str(location['lat']) + "," + str(location['lng'])
+        print " weather_request: " + str(weather_request)
+        response = requests.get(weather_request)
+
+        print str(response)
+        # TODO parse weather response!
 
 
 def get_coordinates(address):
     response = requests.post(GOOGLE_API_MAP_URL,
                       params={'address': address, 'key': GOOGLE_API_KEY})
-    print " >> geocode: " + str(response)
 
-    if 'results' in response:
-        print "response[results] " + str(response['results'])
     if hasattr(response, 'text'):
-        print "response.text " + str(response.text)
-    return response
-
+        response_text = json.loads(response.text)
+        if 'results' in response_text:
+            for res in response_text['results']:
+                if 'geometry' in res:
+                    if 'location' in res['geometry']:
+                        return res['geometry']['location']
 
 if __name__ == '__main__':
     print str(give_address_on_match("Herman bob weather", WEATHER_PATTERNS))
