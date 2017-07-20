@@ -12,7 +12,12 @@ def process_message(request_post):
     if u'text' in request_post:
         poss_addres = give_address_on_match(request_post[u'text'], WEATHER_PATTERNS)
         if poss_addres:
-            return give_weather(poss_addres)
+            weather_curr = give_weather(poss_addres)
+            if weather_curr:
+                return "Currently its " + give_weather(poss_addres) + " in " + poss_addres
+            else:
+                # state this was an assumption
+                return "We don't know what the weather is in " + poss_addres
             # todo consider throwing an error
         else:
             return "Sorry, what was that?"  # todo state assumption that we need to send SOMETHING
@@ -98,14 +103,21 @@ def give_weather(address):
 
         print str(response)
         # TODO parse weather response!
+        if hasattr(response, 'json'):
+            if 'currently' in response.json():
+                print "> weather: " + str(response.json()['currently'])
+                if 'temperature' in response.json()['currently'] and 'summary' in response.json()['currently']:
+                    return str(response.json()['currently']['temperature']) + 'F ' + \
+                           str(response.json()['currently']['summary'])
 
 
 def get_coordinates(address):
     response = requests.post(GOOGLE_API_MAP_URL,
                       params={'address': address, 'key': GOOGLE_API_KEY})
 
-    if hasattr(response, 'text'):
-        response_text = json.loads(response.text)
+    if hasattr(response, 'json'):
+        # response_text = json.loads(response.text)
+        response_text = response.json()
         if 'results' in response_text:
             for res in response_text['results']:
                 if 'geometry' in res:
