@@ -7,8 +7,6 @@ import json
 
 @csrf_exempt
 def process_messages(request):
-    print " >> RECEIVED: " + str(request.POST)
-
     response_text = route_post_request(request.POST)
 
     data = {

@@ -10,10 +10,6 @@ class MsgTestCase(TestCase):
                     "weather in <Location>",
                     "<Location> weather"]
 
-    # def setUp(self):
-    #     print " did setup "
-
-
     def test_set_match(self):
         self.assertEqual(give_address_on_match("Herman bob weather", self.WEATHER_PATTERNS), "herman bob")
         self.assertEqual(give_address_on_match("what's the weather in large hamster", self.WEATHER_PATTERNS),
@@ -36,4 +32,10 @@ class MsgTestCase(TestCase):
         self.assertEqual(seek_like_patterns_from_list("weather the in large hamster fake addres", self.WEATHER_PATTERNS, "<Location>"),
                          None)
         self.assertEqual(seek_like_patterns_from_list("What is the weather in blah blah super nice", self.WEATHER_PATTERNS, "<Location>"),
+                         None)
+        self.assertEqual(seek_like_patterns_from_list("weather", self.WEATHER_PATTERNS, "<Location>"),
+                         None)
+        self.assertEqual(seek_like_patterns_from_list("", self.WEATHER_PATTERNS, "<Location>"),
+                         None)
+        self.assertEqual(seek_like_patterns_from_list(None, self.WEATHER_PATTERNS, "<Location>"),
                          None)
