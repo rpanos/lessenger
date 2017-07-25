@@ -7,7 +7,7 @@ import logging
 WEATHER_PATTERNS = ["what's the weather in <Location>",
                     "weather in <Location>",
                     "<Location> weather"]
-logger = logging.getLogger('testlogger')
+logger = logging.getLogger('main_logger')
 
 
 def process_message(request_post):
@@ -23,31 +23,6 @@ def process_message(request_post):
                 return "We don't know what the weather is in " + poss_addres
         else:
             return "Sorry, what was that?"  # todo state assumption that we need to send SOMETHING
-
-
-def give_address_on_match(text, pattern_ls):
-    lower_word_ls = text.lower().split()
-    original_text_ls = text.lower().split()
-
-    for possible_pattern in pattern_ls:  # no enumerate?
-        possible_pattern_ls = str.lower(possible_pattern).split()
-
-        overlap_words = set(possible_pattern_ls).intersection(lower_word_ls)
-
-        possible_pattern_ls.remove("<location>")
-        if set(overlap_words) == set(possible_pattern_ls):
-            for overlap_wd in overlap_words:
-                lower_word_ls.remove(overlap_wd)
-            address_text = lower_word_ls
-            for address_wd in address_text:
-                original_text_ls.remove(address_wd)
-            non_address_text = original_text_ls
-            if possible_pattern_ls == non_address_text:
-                address_str = " ".join(address_text)
-                if address_str in text.lower():
-                    return address_str
-            # todo state assumption that address service does not care about case
-            # todo: MAYBE swap address for <location> and be sure its the same sentance
 
 
 # todo: consider a form that might return more than one match?
@@ -118,14 +93,6 @@ def get_coordinates(address):
 
 
 if __name__ == '__main__':
-    print str(give_address_on_match("Herman bob weather", WEATHER_PATTERNS))
-    print str(give_address_on_match("what's the weather in large hamster", WEATHER_PATTERNS))
-    print str(give_address_on_match("what's the weather in <Location>", WEATHER_PATTERNS))
-
-    print str(give_address_on_match("weather what's the in large hamster fake address", WEATHER_PATTERNS))
-    print str(give_address_on_match("What is the weather in blah blah ssuper niot", WEATHER_PATTERNS))
-
-    print " ++++ "
     print str(seek_like_patterns_from_list("Herman bob weather", WEATHER_PATTERNS, "<Location>"))
     print str(seek_like_patterns_from_list("what's the weather in large hamster", WEATHER_PATTERNS, "<Location>"))
     print str(seek_like_patterns_from_list("what's the weather in <Location>", WEATHER_PATTERNS, "<Location>"))
